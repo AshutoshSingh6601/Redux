@@ -1,3 +1,5 @@
+import { produce } from "immer";
+
 // Action Types
 let CART_ADD_ITEM = "cart/addItem";
 let CART_REMOVE_ITEM = "cart/removeItem";
@@ -26,41 +28,47 @@ export const decreaseCartQuantity = (productId) => {
 };
 
 // Reducer
-const CartItemReducer = (state = [], action) => {
-  switch (action.type) {
-    case CART_ADD_ITEM:
-      let existingItem = state.find(
-        (cart) => cart.productId === action.payload.productId
-      );
-      return existingItem
-        ? state.map((cartItem) =>
-            cartItem.productId === existingItem.productId
-              ? { ...cartItem, quantity: cartItem.quantity + 1 }
-              : cartItem
-          )
-        : [...state, {...action.payload, quantity: 1}];
-    case CART_REMOVE_ITEM:
-      return state.filter(
-        (cartItem) => cartItem.productId !== action.payload.productId
-      );
-    case CART_INCREASE_QUANTITY:
-      return state.map((cartItem) => {
-        return cartItem.productId === action.payload.productId
-          ? { ...cartItem, quantity: cartItem.quantity + 1 }
-          : cartItem;
-      });
-    case CART_DECREASE_QUANTITY:
-      return state
-        .map((cartItem) => {
-          return cartItem.productId === action.payload.productId
-            ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem;
-        })
-        .filter((cartItem) => cartItem.quantity > 0);
+const CartItemReducer = (initialState = [], action) => {
 
-    default:
-      return state;
-  }
+  return produce(initialState, (state)=>{
+    const existingIndex = state.findIndex((state)=>state.productId === action.payload.productId)
+    switch (action.type) {
+      case CART_ADD_ITEM:
+        if(existingIndex !== -1){
+          console.log(existingIndex, '=======')
+          state[existingIndex].quantity += 1
+          return state
+        }
+        state.push({...action.payload, quantity: 1})
+        return state
+
+      case CART_REMOVE_ITEM:
+        state.splice(existingIndex, 1)
+        return state
+      case CART_INCREASE_QUANTITY:
+        if(existingIndex !== -1){
+          state[existingIndex].quantity += 1
+          return state
+        }
+        return 
+      case CART_DECREASE_QUANTITY:
+        state[existingIndex].quantity -= 1
+        if(state[existingIndex].quantity === 0){
+          state.splice(existingIndex, 1)
+        }
+        return state
+  
+      default:
+        return state;
+    }
+  })
+
 };
+
+// let user = [{ name: 'Ashutosh', age: 23}, {name: 'Ashu', age: 24}]
+
+// user[1].name = 'Shani'
+
+// console.log(user.map((user, i)=> i === 1 ? {...user, name: 'Shani'} : user))
 
 export default CartItemReducer;
