@@ -20,14 +20,14 @@ const Cart = ({ productId, quantity, imageUrl, price, rating, title, cardWish })
       <div className={`max-[550px]:inline ${cardWish === 'wish' ? 'min-[5px]:hidden' : ''}`}>${price}</div>
       <div className={`max-[550px]:inline-block max-[550px]:me-5 max-[550px]:mt-5 flex flex-nowrap items-center gap-2 ${cardWish === 'wish' ? 'min-[5px]:hidden' : ''}`}>
         <button
-          onClick={() => dispatch(decreaseCartQuantity(productId))}
+          onClick={() => dispatch(decreaseCartQuantity({productId}))}
           className="bg-gray-100 hover:bg-gray-200 p-1 px-2 rounded border border-[#898989] "
         >
           -
         </button>
         <span className="max-[550px]:mx-2">{quantity}</span>
         <button
-          onClick={() => dispatch(increaseCartQuantity(productId))}
+          onClick={() => dispatch(increaseCartQuantity({productId}))}
           className="bg-gray-100 hover:bg-gray-200 p-1 px-2 rounded border border-[#898989] "
         >
           +
