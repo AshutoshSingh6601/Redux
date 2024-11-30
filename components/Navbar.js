@@ -1,17 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MdShoppingCart } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { IoIosHeartEmpty } from "react-icons/io";
+import { isError, isProducts, productList } from "../store/ProductsListReducer";
 
 const Navbar = ({setCardWish}) => {
+  let dispatch = useDispatch()
   let CartItemCount = useSelector((state) => state.cartItem);
   let WishListCount = useSelector((state) => state.wishList);
   let TotalCount = CartItemCount.reduce(
     (accumulator, currentValue) => accumulator + currentValue.quantity,
     0
   );
+
+  useEffect(() => {
+    dispatch(isProducts())
+    fetch('https://fakestoreapi.com/products')
+    .then((res)=>res.json())
+    .then((data)=>dispatch(productList(data)))
+    .catch((err)=>dispatch(isError()))
+  console.log("20")
+  }, [])
 
   return (
     <div className="flex items-center justify-between p-4 text-2xl border-b border-[#898989] header">
