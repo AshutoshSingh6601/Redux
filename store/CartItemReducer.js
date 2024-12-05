@@ -4,34 +4,52 @@ const findExistingIndex = (state, action) => state.findIndex((item)=> item.produ
 
 const cartSlice = createSlice({
   name: 'cart',
-  initialState: [],
+  initialState: {
+    loading: false,
+    list: [],
+    error: '',
+  },
   reducers: {
+    cartLoading(state){
+      state.loading = true
+    },
+    cartError(state, action){
+      state.loading = false
+      state.error = action.payload || 'Something went wrong'
+    },
+    cartData(state, action){
+      state.loading = false
+      state.list = action.payload.products
+    },
     addCartItem(state, action){
-      let existingIndex = findExistingIndex(state, action)
+      state.loading = true
+      let existingIndex = findExistingIndex(state.list, action)
       if(existingIndex !== -1){
-        state[existingIndex].quantity += 1
+        state.list[existingIndex].quantity += 1
       }else{
-        state.push({...action.payload, quantity: 1})
+        state.list.push({...action.payload, quantity: 1})
       }
     },
     removeCartItem(state, action){
-      let existingIndex = findExistingIndex(state, action)
-      state.splice(existingIndex, 1)
+      let existingIndex = findExistingIndex(state.list, action)
+      state.list.splice(existingIndex, 1)
     },
     increaseCartQuantity(state, action){
-      let existingIndex = findExistingIndex(state, action)
-      state[existingIndex].quantity += 1
+      let existingIndex = findExistingIndex(state.list, action)
+      state.list[existingIndex].quantity += 1
     },
     decreaseCartQuantity(state, action){
-      let existingIndex = findExistingIndex(state, action)
-      state[existingIndex].quantity -= 1
-      if(state[existingIndex].quantity === 0){
-        state.splice(existingIndex, 1)
+      let existingIndex = findExistingIndex(state.list, action)
+      state.list[existingIndex].quantity -= 1
+      if(state.list[existingIndex].quantity === 0){
+        state.list.splice(existingIndex, 1)
       }
     },
   }
 })
 
-export const { addCartItem, removeCartItem, increaseCartQuantity, decreaseCartQuantity } = cartSlice.actions
+export const { addCartItem, removeCartItem, increaseCartQuantity, decreaseCartQuantity, cartLoading, cartError, cartData } = cartSlice.actions
+
+export const onCartLoading = (state) => state.cartItem.loading
 
 export default cartSlice.reducer

@@ -39,7 +39,7 @@ export default function Product({ productId, title, rating, price, imageUrl }) {
         <button
           className="bg-gray-100 hover:bg-gray-200 p-2 rounded border border-[#898989] "
           onClick={() =>
-            dispatch(addCartItem({ productId, title, rating, price, imageUrl }))
+            dispatch(addCartItem({ productId }))
           }
         >
           Add to Cart

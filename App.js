@@ -7,7 +7,7 @@ import Carts from "./pages/Carts";
 
 const App = () => {
 
-  const [cardWish, setCardWish] = useState('')
+  const [cardWish, setCardWish] = useState('shop')
   
   return (
     <BrowserRouter>

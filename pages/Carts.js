@@ -2,14 +2,27 @@ import React from "react";
 import Cart from "../components/Cart";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { onCartLoading } from "../store/CartItemReducer";
 
 const Carts = ({cardWish}) => {
-  let CartItemCount = useSelector((state) => state.cartItem);
+  // let CartItemCount = useSelector((state) => state.cartItem);
   let WishListCount = useSelector((state) => state.wishList);
   // const location = useLocation()
   // let productList = location.state
+  
+  let CartItemCount = useSelector(({cartItem, product}) => {
+    return cartItem.list.map(({productId, quantity})=>{
+      const productInCart = product.list.find((product) => product.id === productId)
+      return {...productInCart, quantity}
+    })
+  });
+  
+  let cartLoading = useSelector(onCartLoading);
+  let cartError = useSelector((state) => state.cartItem.error);
 
-  let a = cardWish === 'shop' ? CartItemCount : WishListCount
+console.log(CartItemCount)
+
+  let cartOrWishList = cardWish === 'shop' ? CartItemCount : WishListCount
 
   return (
     <div>
@@ -20,21 +33,28 @@ const Carts = ({cardWish}) => {
         <div className="">Quantity</div>
         <div className="">Total</div>
       </div>
-      {a.map(
-        ({ productId, quantity, imageUrl, price, rating, title }) => (
-          <Cart
-            key={productId}
-            cardWish={cardWish}
-            productId={productId}
-            title={title}
-            price={price}
-            imageUrl={imageUrl}
-            rating={rating}
-            quantity={quantity}
-          />
-        )
-      )}
+      {cartLoading ? <h1 className="text-center text-2xl mt-5 font-bold">Loading...</h1> : cartError ? <h2 className="text-center text-xl mt-5 font-bold">{cartError}</h2> :
+<div className="">
 
+  {cartOrWishList.map(
+    ({ id, quantity, image, price, rating, title }) => (
+      <Cart
+        key={id}
+        cardWish={cardWish}
+        productId={id}
+        title={title}
+        price={price}
+        imageUrl={image}
+        rating={rating.rate}
+        quantity={quantity}
+      />
+    )
+  )}
+</div>
+      }
+
+{
+  !cartLoading && !cartError &&
       <div className={`grid grid-cols-7 px-5 py-2 font-semibold gap-4 ${cardWish === 'wish' ? 'hidden' : ''}`}>
         <div className="max-[550px]:col-span-3 col-span-4">Total</div>
         <div className=""></div>
@@ -48,6 +68,7 @@ const Carts = ({cardWish}) => {
           ).toFixed(2)}
         </div>
       </div>
+}
     </div>
   );
 };
