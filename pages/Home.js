@@ -13,7 +13,7 @@ const Home = () => {
   return (
     <div>
       {
-        isLoading ? <h1 style={{textAlign: 'center'}}>Loading...</h1> : isError ? <h2>{isError}</h2> :
+        isLoading ? <h1 style={{textAlign: 'center', fontWeight: 'bold', fontSize: '1.5rem', marginTop: '2rem'}}>Loading...</h1> : isError ? <h2>{isError}</h2> :
       <div className="products-container">
         {ProductList.map(({ id, title, rating, price, image }) => (
           <Product

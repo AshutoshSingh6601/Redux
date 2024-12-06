@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { isError, isProducts, productList } from "../store/ProductsListReducer";
 import { cartData, cartError, cartLoading } from "../store/CartItemReducer";
+import { fetchData } from "../store/middleware/api";
 
 const Navbar = ({setCardWish}) => {
   let dispatch = useDispatch()
@@ -17,20 +18,22 @@ const Navbar = ({setCardWish}) => {
   );
 
   useEffect(() => {
-    
-    dispatch(isProducts())
-    fetch('https://fakestoreapi.com/products')
-    .then((res)=>res.json())
-    .then((data)=>dispatch(productList(data)))
-    .catch((err)=>dispatch(isError()))
-    
-    
-    dispatch(cartLoading())
-    fetch('https://fakestoreapi.com/carts/5')
-    .then((res)=>res.json())
-    .then((data)=>dispatch(cartData(data)))
-    .catch((err)=>dispatch(cartError()))
-    
+
+    dispatch({type: 'api/makeCall', payload: {
+      url: 'products',
+      onLoad: isProducts.type,
+      // onSuccess: productList,  //--> if we do without .type it will not shows this in reduxToolKit
+      onSuccess: productList.type,
+      onError: isError,
+    }})   // --> we can do this way or otherwise as the below type
+
+    dispatch(fetchData({
+      url: 'carts/5',
+      onLoad: cartLoading.type,
+      onSuccess: cartData.type,
+      onError: cartError,
+    }))
+
   }, [])
 
   return (
