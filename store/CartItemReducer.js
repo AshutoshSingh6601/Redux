@@ -48,6 +48,15 @@ const cartSlice = createSlice({
   }
 })
 
+// Thunk action creator
+export const fetchCartData = ()=> (dispatch) => {
+  dispatch(cartLoading())
+  fetch("https://fakestoreapi.com/carts/5")
+    .then((res) => res.json())
+    .then((data) => dispatch(cartData(data)))
+    .catch((err) => dispatch(cartError()));
+}
+
 export const { addCartItem, removeCartItem, increaseCartQuantity, decreaseCartQuantity, cartLoading, cartError, cartData } = cartSlice.actions
 
 export const onCartLoading = (state) => state.cartItem.loading
